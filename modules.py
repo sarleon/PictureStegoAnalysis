@@ -1,7 +1,8 @@
 #coding:utf-8
 import random,commands,re
 from output_helper import color_print,debug_log
-
+import os
+from config import base_path,tmp_path
 
 
 
@@ -19,11 +20,11 @@ class BaseModule():
     name = "Base Module"
 
 
-    desribtion = "Base Class of all the modules"
+    desribtion = ""
 
 
     def __init__(self):
-        pass
+        color_print("[模块:"+self.name+"],"+self.desribtion,1)
 
 
     def module_print(self,content):
@@ -66,11 +67,34 @@ class BaseModule():
 
 class ExifModule(BaseModule):
     requirement = 'exif'
-    name = 'exif module'
+    name = 'exif 模块'
+    desribtion = "检查jpg/jpeg格式文件的exif信息"
     def run(self,filename,content=None):
         result = commands.getoutput("exif "+filename)
         self.module_print(result)
 
 
+class BinwalkModule(BaseModule):
+    requirement = 'binwalk'
+    name = 'binwalk 模块'
+    desribtion =  '检查二进制文件的类型'
+    def run(self,filename,content=None):
+        result = commands.getoutput("binwalk "+filename)
+        self.module_print(result)
 
-enable_module_list=[ExifModule]
+class ForemostModule(BaseModule):
+    requirement = 'foremost'
+    name = 'foremost模块'
+    desribtion = "从二进制文件中分离出"
+    def run(self,filename,content=None):
+
+
+        result = commands.getoutput("foremost -o "+tmp_path+" "+filename )
+
+
+        commands.getoutput('rm -rf '+tmp_path)
+
+
+
+
+enable_module_list=[BinwalkModule,ExifModule,ForemostModule]
